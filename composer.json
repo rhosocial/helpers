@@ -1,0 +1,22 @@
+{
+    "name": "rhosocial/helpers",
+    "description": "The helpers for PHP application.",
+    "type": "package",
+    "keywords": ["helpers", "number", "ip"],
+    "license": "AGPLv3",
+    "authors": [
+        {
+            "name": "vistart",
+            "email": "i@vistart.me"
+        }
+    ],
+    "require": {
+        "php": ">=5.6.0",
+        "yiisoft/yii2": ">=2.0.10"
+    },
+    "autoload": {
+        "psr-4": {
+            "rhosocial\\base\\helpers\\": ""
+        }
+    }
+}
