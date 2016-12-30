@@ -27,26 +27,27 @@ class BaseNumber
      * @param boolean $lowercase Determines whether it needs to be lower case.
      * @return string the Guid generated with parameters.
      */
-    public static function guid($need_braces = false, $lowercase = false)
+    public static function guid($need_braces = false, $lowercase = false, $existed = null)
     {
-        if (function_exists('com_create_guid')){
-            $uuid = com_create_guid();
-        } else {
-            mt_srand((double)microtime() * 1000);
-            $charid = strtoupper(md5(uniqid(rand(), true)));
-            $hyphen = chr(45);
-            $uuid = chr(123)
-                    .substr($charid, 0, 8) . $hyphen
-                    .substr($charid, 8, 4) . $hyphen
-                    .substr($charid, 12, 4) . $hyphen
-                    .substr($charid, 16, 4) . $hyphen
-                    .substr($charid, 20, 12) . chr(125);
+        if (!$existed) {
+            $existed = static::guid_bin();
         }
+        $charid = '';
+        for ($i = 0; $i < strlen($existed); $i++) {
+            $charid .= bin2hex($existed[$i]);
+        }
+        $hyphen = chr(45);
+        $guid = chr(123)
+                .substr($charid, 0, 8) . $hyphen
+                .substr($charid, 8, 4) . $hyphen
+                .substr($charid, 12, 4) . $hyphen
+                .substr($charid, 16, 4) . $hyphen
+                .substr($charid, 20, 12) . chr(125);
         if ($need_braces === false)
         {
-            $uuid = (($need_braces == true) ? $uuid : trim($uuid, '{}'));
+            $guid = (($need_braces == true) ? $guid : trim($guid, '{}'));
         }
-        return ($lowercase === true ? strtolower($uuid) : $uuid);
+        return ($lowercase === true ? strtolower($guid) : $guid);
     }
 
     /**
@@ -56,23 +57,24 @@ class BaseNumber
     public static function guid_bin()
     {
         mt_srand((double)microtime() * 1000);
-        return md5(uniqid(rand(), true), true);
+        $uniqid = uniqid(rand(), true);
+        return md5($uniqid, true);
     }
     
     /**
-     * 去掉不匹配 GUID 模式的数组元素。
-     * @param string[] $uuids 原始数组。
-     * @return string[] 去掉不匹配 GUID 模式数组元素的数组。
+     * Unset invalid GUID element of an array.
+     * @param string[] $guids original array.
+     * @return string[] GUID array without invalid ones.
      */
-    public static function unsetInvalidGUIDs($uuids)
+    public static function unsetInvalidGUIDs($guids)
     {
-        foreach ($uuids as $key => $uuid)
+        foreach ($guids as $key => $guid)
         {
-            if (!preg_match(self::GUID_REGEX, $uuid)){
-                unset($uuids[$key]);
+            if (!preg_match(self::GUID_REGEX, $guid)){
+                unset($guids[$key]);
             }
         }
-        return $uuids;
+        return $guids;
     }
     
     /**
