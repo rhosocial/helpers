@@ -25,6 +25,7 @@ class BaseNumber
      * Generate the guid with parameters.
      * @param boolean $need_braces Determines whether it needs both sides of braces.
      * @param boolean $lowercase Determines whether it needs to be lower case.
+     * @param string If this parameter is 128-bit hexidecimal, then it will return the readable one.
      * @return string the Guid generated with parameters.
      */
     public static function guid($need_braces = false, $lowercase = false, $existed = null)
@@ -52,10 +53,18 @@ class BaseNumber
 
     /**
      * Generate raw GUID binary.
+     * @param string If this parameter is readable GUID value, the corresponding
+     * binary will be given. The brace is accepted.
      * @return string raw output of GUID.
      */
-    public static function guid_bin()
+    public static function guid_bin($existed = null)
     {
+        if (is_string($existed)) {
+            $guid = trim($existed, '{}');
+            if (preg_match(static::GUID_REGEX, $guid)) {
+                return hex2bin(str_replace([' ', '-'], '', $guid));
+            }
+        }
         mt_srand((double)microtime() * 1000);
         $uniqid = uniqid(rand(), true);
         return md5($uniqid, true);
