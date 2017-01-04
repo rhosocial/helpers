@@ -71,6 +71,40 @@ class BaseNumber
     }
     
     /**
+     * Divide composited guid binary into chunk.
+     * @param string $guids
+     * @return array
+     */
+    public static function divide_guid_bin($guids)
+    {
+        if (!is_string($guids) || strlen($guids) == 0 || strlen($guids) % 16 > 0) {
+            return null;
+        }
+        return str_split($guids, 16);
+    }
+    
+    /**
+     * Composited guid binary chunk into one string.
+     * @param array $guids
+     * @return string
+     */
+    public static function composite_guid($guids)
+    {
+        if (!is_array($guids) || empty($guids)) {
+            return '';
+        }
+        if (is_string($guids[0]) && strlen($guids[0]) == 16) {
+            return implode('', $guids);
+        }
+        $validGuids = static::unsetInvalidGUIDs($guids);
+        $composited = '';
+        foreach ($validGuids as $guid) {
+            $composited .= static::guid_bin($guid);
+        }
+        return $composited;
+    }
+    
+    /**
      * Unset invalid GUID element of an array.
      * @param string[] $guids original array.
      * @return string[] GUID array without invalid ones.
