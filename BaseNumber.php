@@ -78,7 +78,7 @@ class BaseNumber
     public static function divide_guid_bin($guids)
     {
         if (!is_string($guids) || strlen($guids) == 0 || strlen($guids) % 16 > 0) {
-            return null;
+            return [];
         }
         return str_split($guids, 16);
     }
