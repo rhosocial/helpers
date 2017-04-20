@@ -128,6 +128,15 @@ class BaseNumber
      */
     public static function randomNumber($prefix = '4', $length = 8)
     {
+        if (function_exists('random_int')) {
+            $length = $length - strlen($prefix);
+            $result = $prefix;
+            while ($length > 0) {
+                $result .= static::randomNumberUsingRandomInt('', $length > 9 ? 9 : $length);
+                $length -= 9;
+            }
+            return $result;
+        }
         $key = "";
         $pattern = '1234567890';
         for ($i = 0; $i < $length - strlen($prefix); $i++)
@@ -135,5 +144,18 @@ class BaseNumber
             $key .= $pattern[mt_rand(0, 9)];
         }
         return $prefix . $key;
+    }
+
+    /**
+     * Generate the random number using `random_int` method.
+     * This method is only available for PHP 7 and above.
+     * @param string $prefix
+     * @param int $length
+     * @return string
+     */
+    public static function randomNumberUsingRandomInt($prefix = '4', $length = 8)
+    {
+        $max = (int)str_pad("9", $length - strlen($prefix), "9");
+        return $prefix . (string)str_pad(random_int(0, $max), $length - strlen($prefix), "0", STR_PAD_LEFT);
     }
 }
