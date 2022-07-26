@@ -65,7 +65,7 @@ class BaseNumber
                 return hex2bin(str_replace([' ', '-'], '', $guid));
             }
         }
-        mt_srand((double)microtime() * 1000);
+        mt_srand(microtime(true) * 1000);
         $uniqid = uniqid(rand(), true);
         return md5($uniqid, true);
     }
